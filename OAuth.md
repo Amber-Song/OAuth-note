@@ -1,4 +1,4 @@
-# background
+# Background
 
 Before OAuth, a common way to grant access to protected data was to give third parties your username and password, allowing them to act as you. This method is not secure for two main reasons:
 
@@ -14,7 +14,7 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
 
 # Steps for Building an App Using an existing OAuth 2.0 service (with GitHub as an Example)
 
-1. Register a New Application
+## Register a New Application
     1. Create a Developer Account: Sign up on the service's website.
     2. Enter Basic Information
         - Redirect URLs:
@@ -24,7 +24,7 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
         - client_secret: Must be kept confidential and usually stored in the backend.
         ![Github application created](/assets/github_application_created.png)
 
-2. Initiate Login Process: Visit *'https://github.com/login/oauth/authorize'* with `?action=login` in the query string to get authorization code.
+## Initiate Login Process: Visit *'https://github.com/login/oauth/authorize'* with `?action=login` in the query string to get authorization code.
 
 ```
     // Start the login process by sending the user to GitHub's authorization page
@@ -57,7 +57,7 @@ After the user approves the request, they will be redirected back with code and 
 * Ensure access token and state are stored in session storage to avoid losing them when the component unmounts.
 * The "State" parameter here is used to verify if it matches with the state stored in the session. It is used to protect the client from CSRF attacks.
 
-3. Obtain access token: Send a request to Github's token endpoint *'https://github.com/login/oauth/access_token'* to exchange the authorization code for an access token.
+## Obtain access token: Send a request to Github's token endpoint *'https://github.com/login/oauth/access_token'* to exchange the authorization code for an access token.
 ```
     // Verify the state matches our stored state
     const storedState = sessionStorage.getItem('state');
@@ -104,7 +104,7 @@ The response will look like below:
 }
 ```
 
-4. Make API request with access token
+## Make API request with access token
 ```
 // Use access token to get the lists of repo for the user
 const url = 'https://api.github.com/user/repos?sort=created&direction=desc';
