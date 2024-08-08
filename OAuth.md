@@ -24,6 +24,33 @@ Authorization
 Access token
 : OAuth was designed as an authorization protocol. The access token itself does not provide information about who the user is.
 
+Flow / grant types
+: OAuth 2.0 flows, also known as grant types, are different methods for obtaining access tokens. These flows are designed for various scenarios depending on the type of client (e.g., web app, mobile app, single-page app) and the required level of security.
+
+
+
+# Common OAuth 2.0 Flows (Grant Types)
+- Authorization Code Flow
+    - Use Case: Web applications with a back-end server.
+    - Description: This flow involves the client (application) redirecting the user to an authorization server to request an authorization code. The client exchanges this code for an access token and, optionally, a refresh token. It's secure because the client secret and tokens are never exposed to the user's browser.
+    - Security: High.
+- Implicit Flow
+    - Use Case: Single-page applications (SPAs) or applications where the client code runs entirely in the browser and doesn't have a back-end server.
+    - Description: The client directly receives an access token from the authorization server after the user grants permission. No authorization code is involved. It's faster but less secure because the access token is exposed to the user's browser.
+    - Security: Moderate, with increased risks if proper precautions (e.g., short-lived tokens) aren't taken.
+- Resource Owner Password Credentials Flow (Password Flow)
+    - Use Case: Trusted applications where the resource owner (user) has a high level of trust in the client, such as first-party apps.
+    - Description: The user provides their username and password directly to the client, which then uses these credentials to obtain an access token. This flow is not recommended for third-party apps due to security concerns.
+    - Security: Low, since the client handles the user's credentials directly.
+- Device Authorization Flow (Device Flow)
+    - Use Case: Devices with limited input capabilities, such as smart TVs or IoT devices.
+    - Description: The user is instructed to visit a URL on a separate device (like a phone or computer) and enter a code to authorize the client. The client then polls the authorization server to obtain an access token once the user has authorized the device.
+    - Security: Moderate, with potential risks if the code is intercepted during the process.
+- Refresh Token Flow:
+    - Use Case: Refreshing an access token when it expires without requiring the user to re-authenticate.
+    - Description: The client uses a refresh token, which was previously issued along with the access token, to obtain a new access token. This flow is often used in conjunction with the Authorization Code Flow.
+    - Security: High, assuming proper handling of refresh tokens.
+
 
 
 # Steps for Building an App Using an existing OAuth 2.0 service (with GitHub as an Example)
