@@ -95,17 +95,17 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
 # Steps for Building an App Using an Existing OAuth 2.0 Service with GitHub as an Example (Authorization Code Flow)
 
 ## Register a New Application
-    1. Create a Developer Account: Sign up on the service's website.
-    2. Enter Basic Information
-        - Redirect URLs:
-            These are the URLs where the OAuth 2.0 service will redirect users after authorization. They must be HTTPS to prevent intercepted during authorization process and must be registered with the service to prevent the redirection attacks. Use a local address if developing locally. Typically, create two applications: one for development and one for production.
-    3. Once this is done, you will get credentials (client_id and client_secret)
-        - client_id: Used to build authorization URLs. Can be included in the JavaScript source code.
-        - client_secret: Must be kept confidential and usually stored in the backend.
-        ![Github application created](/assets/github_application_created.png)
+1. Create a Developer Account: Sign up on the service's website.
+2. Enter Basic Information
+    - Redirect URLs:
+        These are the URLs where the OAuth 2.0 service will redirect users after authorization. They must be HTTPS to prevent intercepted during authorization process and must be registered with the service to prevent the redirection attacks. Use a local address if developing locally. Typically, create two applications: one for development and one for production.
+3. Once this is done, you will get credentials (client_id and client_secret)
+    - client_id: Used to build authorization URLs. Can be included in the JavaScript source code.
+    - client_secret: Must be kept confidential and usually stored in the backend.
+    ![Github application created](/assets/github_application_created.png)
 
-## Request authorization from the user: Visit an authorization request link *'https://github.com/login/oauth/authorize'* with `?action=login` in the query string to get authorization code.
-* For security, the authorization page must appear in a web browser that the user is familiar with and should not be embedded in an iframe, popup, or an embedded browser within a mobile app.
+## Request authorization from the user
+Visit an authorization request link *'https://github.com/login/oauth/authorize'* with `?action=login` in the query string to get authorization code. For security, the authorization page must appear in a web browser that the user is familiar with and should not be embedded in an iframe popup or an embedded browser within a mobile app.
 
 ```
     // Start the login process by sending the user to GitHub's authorization page
@@ -133,13 +133,10 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
 The last line of code will open up the github OAuth authorizarion propmt.
 ![Github oauth prompt](/assets/github_oauth_prompt.png)
 
-After the user approves the request, the server will redirect back to the app with code and state parameters in url like *"http://localhost:3000/?code=3a9db23f832d7f7128ef&state=82831621252225151913920917055165101170"*
+After the user approves the request, the server will redirect back to the app with code and state parameters in url like *"http://localhost:3000/?code=3a9db23f832d7f7128ef&state=82831621252225151913920917055165101170"*. Ensure access token and state are stored in session storage to avoid losing them when the component unmounts.
 
-* Ensure access token and state are stored in session storage to avoid losing them when the component unmounts.
-* The "State" parameter here is used to verify if it matches with the state stored in the session. It is used to protect the client from CSRF attacks.
-
-## Obtain access token: Send a POST request to Github's token endpoint *'https://github.com/login/oauth/access_token'* to exchange the authorization code for an access token.
-The service will require the client to authenticate itself when making this request. Typically, services support client authentication using HTTP Basic Auth with the client’s client_id and client_secret. If an app uses the authorization code grant but cannot securely protect its client secret, then the client secret is not required, and PKCE must be used. In such cases, the client-side JavaScript code may need a companion server-side component to perform the OAuth flow securely.
+## Obtain access token
+Send a POST request to Github's token endpoint *'https://github.com/login/oauth/access_token'* to exchange the authorization code for an access token. The service will require the client to authenticate itself when making this request. Typically, services support client authentication using HTTP Basic Auth with the client’s client_id and client_secret. If an app uses the authorization code grant but cannot securely protect its client secret, then the client secret is not required, and PKCE must be used. In such cases, the client-side JavaScript code may need a companion server-side component to perform the OAuth flow securely.
 
 ```
     // Verify the state matches our stored state
