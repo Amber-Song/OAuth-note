@@ -12,6 +12,20 @@ In 2007, a team working on OpenID created a mailing list to develop a standard f
 
 Over the next 22 revisions, disagreements continued, so conflicting issues were separated into their own drafts, making the standard "**extensible**". By the final draft, so much core content had been moved into separate documents that the core specification became more of a **framework** rather than **protocol**. This made it harder to understand, as implementing OAuth 2.0 required synthesizing information from multiple RFCs and drafts.
 
+
+
+# Terms
+Authentication
+: is to verify the identity of a user or system. It answers the question, "Who are you?". During authentication, a user provides credentials, such as a username and password, to prove their identity. The system checks if these credentials match the ones stored in the system.
+
+Authorization
+: is to determin what an authenticated user is allowed to do. It answers the question, "What are you allowed to do?". Once a user is authenticated, the system checks their permissions or roles to determine what resources or actions they are authorized to access or perform.
+
+Access token
+: OAuth was designed as an authorization protocol. The access token itself does not provide information about who the user is.
+
+
+
 # Steps for Building an App Using an existing OAuth 2.0 service (with GitHub as an Example)
 
 ## Register a New Application
@@ -25,7 +39,6 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
         ![Github application created](/assets/github_application_created.png)
 
 ## Initiate Login Process: Visit *'https://github.com/login/oauth/authorize'* with `?action=login` in the query string to get authorization code.
-
 ```
     // Start the login process by sending the user to GitHub's authorization page
 
@@ -126,3 +139,12 @@ fetch(url, {
     console.log(repos); // Handle the response data
 });
 ```
+
+There are several ways to identify a user:
+
+1. The common approach is for the API to provide "user info."
+2. A more advanced and standardized method is using OpenID Connect, an extension of OAuth 2.0.
+
+
+
+# Others
