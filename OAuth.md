@@ -15,77 +15,77 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
 
 
 # Terms
-Authentication
+**Authentication**
 : is to verify the identity of a user or system. It answers the question, "Who are you?". During authentication, a user provides credentials, such as a username and password, to prove their identity. The system checks if these credentials match the ones stored in the system.
 
-Authorization
+**Authorization**
 : is to determin what an authenticated user is allowed to do. It answers the question, "What are you allowed to do?". Once a user is authenticated, the system checks their permissions or roles to determine what resources or actions they are authorized to access or perform.
 
-Resource Owner
+**Resource Owner**
 : Entity that can grant access to a protected resource. Typically, this is the end-user.
 
-Resource Server
+**Resource Server**
 : Server hosting the protected resources. This is the API you want to access.
 
-Authorization Server
+**Authorization Server**
 : Server that authenticates the Resource Owner and issues Access Tokens after getting proper authorization.
 
-Client
+**Client**
 : Application requesting access to a protected resource on behalf of the Resource Owner.
 
-Authorization code
+**Authorization code**
 : A temporary code provided by the authorization server, which the client exchanges for an access token after the user has reviewed and granted the requested permissions.
 
-Flow / grant types
+**Flow / grant types**
 : OAuth 2.0 flows, also known as grant types, are different methods for obtaining access tokens. These flows are designed for various scenarios depending on the type of client (e.g., web app, mobile app, single-page app) and the required level of security.
 
-Authorization request parameters
+**Authorization request parameters**
 : Parameters appended to the application's authorization endpoint in the query string to initiate the authorization process.
 
-State
+**State**
 : The state parameter in the authorization request serves two purposes: it allows the app to store data to indicate what action to perform after authorization, and it acts as a CSRF protection mechanism.
 
-Access token
+**Access token**
 : In OAuth, the access token is used for authorization and does not contain information about the user's identity.
 
-PKCE (Proof Key for Code Exchange)
+**PKCE (Proof Key for Code Exchange)**
 : An extension to the OAuth 2.0 authorization code flow that enhances security, particularly for public clients like mobile or single-page applications.
 
-CSRF (Cross-Site Request Forgery) protection mechanisms
+**CSRF (Cross-Site Request Forgery) protection mechanisms**
 : Methods designed to prevent unauthorized actions on a web application by ensuring that requests are made by the authenticated user and not by an attacker.
 
 
 
 # Common OAuth 2.0 Flows (Grant Types)
-- Authorization Code Flow
-    - Use Case: Web applications with a back-end server.
-    - Description: This flow involves the client (application) redirecting the user to an authorization server to request an authorization code. The client exchanges this code for an access token and, optionally, a refresh token. It's secure because the client secret and tokens are never exposed to the user's browser.
-    - Security: High.
-    - Steps:
+- **Authorization Code Flow**
+    - **Use Case:** Web applications with a back-end server.
+    - **Description:** This flow involves the client (application) redirecting the user to an authorization server to request an authorization code. The client exchanges this code for an access token and, optionally, a refresh token. It's secure because the client secret and tokens are never exposed to the user's browser.
+    - **Security:** High.
+    - **Steps:**
         1. User Authorization Request: The client redirects the user to the authorization server with parameters like client ID and redirect URI, asking for permission to access their data.
         2. User Grants Authorization: The user grants access, and the authorization server redirects them back to the client with an authorization code.
         3. Client Exchanges Authorization Code for Tokens: The client’s back-end server sends a POST request to the token endpoint with the authorization code and client credentials to exchange it for tokens.
         4. Authorization Server Issues Tokens: The server validates the request and responds with an access token and optionally a refresh token.
         5. Client Uses the Access Token: The client uses the access token to make authorized API requests to access protected resources.
-- Implicit Flow
-    - Use Case: Single-page applications (SPAs) or applications where the client code runs entirely in the browser and doesn't have a back-end server.
-    - Description: The client directly receives an access token from the authorization server after the user grants permission. No authorization code is involved. It's faster but less secure because the access token is exposed to the user's browser.
-    - Security: Moderate, with increased risks if proper precautions (e.g., short-lived tokens) aren't taken.
-- Resource Owner Password Credentials Flow (Password Flow)
-    - Use Case: Trusted applications where the resource owner (user) has a high level of trust in the client, such as first-party apps.
-    - Description: The user provides their username and password directly to the client, which then uses these credentials to obtain an access token. This flow is not recommended for third-party apps due to security concerns.
-    - Security: Low, since the client handles the user's credentials directly.
-- Device Authorization Flow (Device Flow)
-    - Use Case: Devices with limited input capabilities, such as smart TVs or IoT devices.
-    - Description: The user is instructed to visit a URL on a separate device (like a phone or computer) and enter a code to authorize the client. The client then polls the authorization server to obtain an access token once the user has authorized the device.
-    - Security: Moderate, with potential risks if the code is intercepted during the process.
-- Refresh Token Flow:
-    - Use Case: Refreshing an access token when it expires without requiring the user to re-authenticate.
-    - Description: The client uses a refresh token, which was previously issued along with the access token, to obtain a new access token. This flow is often used in conjunction with the Authorization Code Flow.
-    - Security: High, assuming proper handling of refresh tokens.
-- Authorization Code Flow with PKCE
-    - Use Case: mobile or single-page applications
-    - Steps:
+- **Implicit Flow**
+    - **Use Case:** Single-page applications (SPAs) or applications where the client code runs entirely in the browser and doesn't have a back-end server.
+    - **Description:** The client directly receives an access token from the authorization server after the user grants permission. No authorization code is involved. It's faster but less secure because the access token is exposed to the user's browser.
+    - **Security:** Moderate, with increased risks if proper precautions (e.g., short-lived tokens) aren't taken.
+- **Resource Owner Password Credentials Flow (Password Flow)**
+    - **Use Case:** Trusted applications where the resource owner (user) has a high level of trust in the client, such as first-party apps.
+    - **Description:** The user provides their username and password directly to the client, which then uses these credentials to obtain an access token. This flow is not recommended for third-party apps due to security concerns.
+    - **Security:** Low, since the client handles the user's credentials directly.
+- **Device Authorization Flow (Device Flow)**
+    - **Use Case:** Devices with limited input capabilities, such as smart TVs or IoT devices.
+    - **Description:** The user is instructed to visit a URL on a separate device (like a phone or computer) and enter a code to authorize the client. The client then polls the authorization server to obtain an access token once the user has authorized the device.
+    - **Security:** Moderate, with potential risks if the code is intercepted during the process.
+- **Refresh Token Flow:**
+    - **Use Case:** Refreshing an access token when it expires without requiring the user to re-authenticate.
+    - **Description:** The client uses a refresh token, which was previously issued along with the access token, to obtain a new access token. This flow is often used in conjunction with the Authorization Code Flow.
+    - **Security:** High, assuming proper handling of refresh tokens.
+- **Authorization Code Flow with PKCE**
+    - **Use Case:** mobile or single-page applications
+    - **Steps:**
         1. Generate Code Verifier and Code Challenge: Create a random string called the **code verifier**. Then, generate a **code challenge** by applying a transformation (usually SHA-256) to the code verifier.
         2. Redirect User for Authorization: Create a URL that redirects the user’s browser to the OAuth authorization server. This URL includes the code challenge and the method used in parameter to generate it. The authorization server will then prompt the user to authorize the application and send an authorization code to the user’s browser.
         3. Exchange Code for Access Token: Send an HTTPS POST request to the authorization server with the code verifier to exchange the authorization code for an access token.
