@@ -54,6 +54,9 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
 **CSRF (Cross-Site Request Forgery) protection mechanisms**
 : Methods designed to prevent unauthorized actions on a web application by ensuring that requests are made by the authenticated user and not by an attacker.
 
+**OpenID Connect (OIDC)**
+: an identity layer built on top of the OAuth 2.0 protocol. OIDC introduces the concept of an ID token, which is a JSON Web Token (JWT) that contains information about the user.
+
 
 
 # Common OAuth 2.0 Flows (Grant Types)
@@ -185,7 +188,7 @@ The response will look like below:
 ```
 
 ## Make API request with access token
-The user's browser never makes a direct request to the API server. Instead, all requests go through the client first, as the access token is maintained in the backend.
+The user's browser never makes a direct request to the API server. Instead, all requests go through the client first, as the access token is maintained in the backend. In large-scale deployments, there can be multiple resource servers (API servers) within the same ecosystem. For example, Google's services include many distinct resource servers, such as Google Cloud Platform, Google Maps, Google Drive, and YouTube. While each of these services operates as a separate resource server, they all share a common authorization server for managing access tokens and permissions.
 ```
 // Use access token to get the lists of repo for the user
 const url = 'https://api.github.com/user/repos?sort=created&direction=desc';
