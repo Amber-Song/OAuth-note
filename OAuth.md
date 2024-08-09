@@ -46,7 +46,7 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
 : The state parameter in the authorization request serves two purposes: it allows the app to store data to indicate what action to perform after authorization, and it acts as a CSRF protection mechanism.
 
 **Access token**
-: In OAuth, the access token is used for authorization and does not contain information about the user's identity.
+: In OAuth, the access token is used for authorization and does not contain information about the user's identity. Some services will use structured tokens like JWTs as Access token. The client shouldn't decode the token.
 
 **PKCE (Proof Key for Code Exchange)**
 : An extension to the OAuth 2.0 authorization code flow that enhances security, particularly for public clients like mobile or single-page applications.
@@ -68,7 +68,7 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
         4. Authorization Server Issues Tokens: The server validates the request and responds with an access token and optionally a refresh token.
         5. Client Uses the Access Token: The client uses the access token to make authorized API requests to access protected resources.
 - **Implicit Flow**
-    - **Use Case:** Single-page applications (SPAs) or applications where the client code runs entirely in the browser and doesn't have a back-end server.
+    - **Use Case:** Single-page applications (SPAs) or applications where the client code runs entirely in the browser and doesn't have a back-end server. However, this is a common historical pattern and is recommended to be deprecated due to several security issues.
     - **Description:** The client directly receives an access token from the authorization server after the user grants permission. No authorization code is involved. It's faster but less secure because the access token is exposed to the user's browser.
     - **Security:** Moderate, with increased risks if proper precautions (e.g., short-lived tokens) aren't taken.
 - **Resource Owner Password Credentials Flow (Password Flow)**
@@ -83,8 +83,8 @@ Over the next 22 revisions, disagreements continued, so conflicting issues were 
     - **Use Case:** Refreshing an access token when it expires without requiring the user to re-authenticate.
     - **Description:** The client uses a refresh token, which was previously issued along with the access token, to obtain a new access token. This flow is often used in conjunction with the Authorization Code Flow.
     - **Security:** High, assuming proper handling of refresh tokens.
-- **Authorization Code Flow with PKCE**
-    - **Use Case:** mobile or single-page applications
+- **Authorization Code Flow with PKCE, along with launching an external browser window**
+    - **Use Case:** mobile or single-page applications who can't maintain the confidentiality of a client secret.
     - **Steps:**
         1. Generate Code Verifier and Code Challenge: Create a random string called the **code verifier**. Then, generate a **code challenge** by applying a transformation (usually SHA-256) to the code verifier.
         2. Redirect User for Authorization: Create a URL that redirects the user’s browser to the OAuth authorization server. This URL includes the code challenge and the method used in parameter to generate it. The authorization server will then prompt the user to authorize the application and send an authorization code to the user’s browser.
@@ -136,7 +136,7 @@ The last line of code will open up the github OAuth authorizarion propmt.
 After the user approves the request, the server will redirect back to the app with code and state parameters in url like *"http://localhost:3000/?code=3a9db23f832d7f7128ef&state=82831621252225151913920917055165101170"*. Ensure access token and state are stored in session storage to avoid losing them when the component unmounts.
 
 ## Obtain access token
-Send a POST request to Github's token endpoint *'https://github.com/login/oauth/access_token'* to exchange the authorization code for an access token. The service will require the client to authenticate itself when making this request. Typically, services support client authentication using HTTP Basic Auth with the client’s client_id and client_secret. If an app uses the authorization code grant but cannot securely protect its client secret, then the client secret is not required, and PKCE must be used. In such cases, the client-side JavaScript code may need a companion server-side component to perform the OAuth flow securely.
+Send a POST request to Github's token endpoint *'https://github.com/login/oauth/access_token'* to exchange the authorization code for an access token. The service will require the client to authenticate itself when making this request. Typically, services support client authentication using HTTP Basic Auth with the client’s client_id and client_secret. If an app uses the authorization code grant but cannot securely protect its client secret, then the client secret is not required, and PKCE must be used. The client_id is used to identify the application, it needs to be included as a POST body parameter. In such cases, the client-side JavaScript code may need a companion server-side component to perform the OAuth flow securely.
 
 ```
     // Verify the state matches our stored state
