@@ -1,7 +1,17 @@
 # Overview
 
 After logging into Teams with a Microsoft or Microsoft 365 account, users can access your app without needing to sign in again.
-TODO: How does this work behind the scenes? Does Teams handle the sign-in process for you?
+
+**Microsoft Entra ID (formerly Azure Active Directory (Azure AD))**
+: a service from Microsoft that helps organizations manage user identities and control access to resources like apps, services, and data.
+
+
+## Difference between SSO and OAuth
+**SSO**
+: SSO allows users to log in once and gain access to multiple, related systems without needing to log in separately to each one. For example, logging into your Google account gives you access to Gmail, Google Drive, YouTube, etc., without requiring separate logins for each service.
+
+**OAuth (Open Authorization)**
+: OAuth is a protocol that allows third-party applications to access a user's resources. For example, a third-party app can access your Google Drive files after you grant permission, without needing your Google password. OAuth can be used as part of an SSO system.
 
 
 
@@ -25,7 +35,7 @@ Define the necessary permissions and API scopes. These configurations allow Micr
 
 You need to configure your tab app's client-side code to obtain an access token from Microsoft Entra ID. If your tab app requires additional Microsoft Graph permissions, you need to pass the access token to the server-side, and exchange it for Microsoft Graph token.
 
-1. **Add client-side code**: Add [Teams Javascript client library](https://learn.microsoft.com/en-us/javascript/api/overview/msteams-client?view=msteams-client-js-latest#microsoft-teams-javascript-client-library), then Call `microsoftTeams.initialize()`. It initializes the communication between your custom tab (or other Teams app components) and the Microsoft Teams client which including Establishing a Connection, Event Subscription,Security Handshake and Enabling APIs. Then call  `microsoftTeams.getAuthToken()`.
+1. **Add client-side code**: Add [Teams Javascript client library](https://learn.microsoft.com/en-us/javascript/api/overview/msteams-client?view=msteams-client-js-latest#microsoft-teams-javascript-client-library), then Call `microsoftTeams.initialize()`. It initializes the communication between your custom tab (or other Teams app components) and the Microsoft Teams client which including Establishing a Connection, Event Subscription, Security Handshake and Enabling APIs. Then call  `microsoftTeams.getAuthToken()`.
 
 ```
 microsoftTeams.app.initialize().then(() => {
@@ -145,18 +155,3 @@ After configure your app to enable SSO for authenticating and authorizing app us
 6. The tab app parses the access token using JavaScript to extract required information.
 
 When a custom app is integrated into Microsoft Teams, the Teams application essentially acts as a wrapper around the front-end of that custom app.
-
-
-## Enable SSO in Microsoft Entra ID
-What is the difference between enable SSO for a team tab app and in microsoft entra ID
-
-**Microsoft Entra ID (formerly Azure Active Directory (Azure AD))**
-: a service from Microsoft that helps organizations manage user identities and control access to resources like apps, services, and data.
-
-
-## Difference between SSO and OAuth
-**SSO**
-: SSO allows users to log in once and gain access to multiple, related systems without needing to log in separately to each one. For example, logging into your Google account gives you access to Gmail, Google Drive, YouTube, etc., without requiring separate logins for each service.
-
-**OAuth (Open Authorization)**
-: OAuth is a protocol that allows third-party applications to access a user's resources. For example, a third-party app can access your Google Drive files after you grant permission, without needing your Google password. OAuth can be used as part of an SSO system.
