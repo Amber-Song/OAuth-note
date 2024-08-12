@@ -23,11 +23,112 @@ Define the necessary permissions and API scopes. These configurations allow Micr
 
 ## Add code to handle token retrieval and validation
 
-1. Add [Teams Javascript client library](https://learn.microsoft.com/en-us/javascript/api/overview/msteams-client?view=msteams-client-js-latest#microsoft-teams-javascript-client-library)
-2. Call `microsoftTeams.initialize()`. TODO: what does initialize do?
-3. Call `microsoftTeams.getAuthToken()`
+You need to configure your tab app's client-side code to obtain an access token from Microsoft Entra ID. If your tab app requires additional Microsoft Graph permissions, you need to pass the access token to the server-side, and exchange it for Microsoft Graph token.
+
+1. **Add client-side code**: Add [Teams Javascript client library](https://learn.microsoft.com/en-us/javascript/api/overview/msteams-client?view=msteams-client-js-latest#microsoft-teams-javascript-client-library), then Call `microsoftTeams.initialize()`. It initializes the communication between your custom tab (or other Teams app components) and the Microsoft Teams client which including Establishing a Connection, Event Subscription,Security Handshake and Enabling APIs. Then call  `microsoftTeams.getAuthToken()`.
+
+```
+microsoftTeams.app.initialize().then(() => {
+    getClientSideToken()
+        .then((clientSideToken) => {
+            return getServerSideToken(clientSideToken);
+        })
+        .then((profile) => {
+            return useServerSideToken(profile);
+        })
+        .catch((error) => {
+            ...
+        })
+})
+
+function getClientSideToken() {
+    return new Promise((resolve, reject) => {
+        microsoftTeams.authentication.getAuthToken().then((result) => {
+            display(result);
+
+            resolve(result);
+        }).catch((error) => {
+            reject("Error getting token: " + error);
+        });
+    });
+}
+```
+2. Pass the access token to server-side code
+```
+function getServerSideToken(clientSideToken) {
+    return new Promise((resolve, reject) => {
+        microsoftTeams.app.getContext().then((context) => {
+            fetch('/getProfileOnBehalfOf', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'tid': context.user.tenant.id,
+                    'token': clientSideToken
+                }),
+                mode: 'cors',
+                cache: 'default'
+            })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    reject(response.error);
+                }
+            })
+            .then((responseJson) => {
+                if (responseJson.error) {
+                    reject(responseJson.error);
+                } else {
+                    const profile = responseJson;
+
+                    resolve(profile);
+                }
+            });
+        });
+    });
+}
+```
+
 
 ## Updating the Teams app manifest to enable token requests
+Configure the webApplicationInfo property in the app manifest file. This property enables SSO for your app to help app users access your tab app seamlessly.
+
+## Extend tab app with Microsoft Graph permissions and scopes
+
+1. Configure API permissions
+2. Might need to Configure authentication for different platforms
+3. Acquire access token for MS Graph by using Microsoft Entra on-behalf-of (OBO) flow. To get the permissions and scopes needed to make a Graph call, SSO apps must implement a custom web service to exchange the token received from the Teams JavaScript library for a token that includes the needed scopes. You can use Microsoft Authentication Library (MSAL) for fetching the token from the client side.
+```
+// Exchange client Id side token with server token
+app.post('/getProfileOnBehalfOf', function(req, res) {
+    var tid = < "Tenant id" >
+    var token = < "Client side token" >
+    var scopes = ["https://graph.microsoft.com/User.Read"];
+
+    // Creating MSAL client
+    const msalClient = new msal.ConfidentialClientApplication({
+        auth: {
+            clientId: < "Client ID" >,
+            clientSecret: < "Client Secret" >
+        }
+    });
+
+    var oboPromise = new Promise((resolve, reject) => {
+        msalClient.acquireTokenOnBehalfOf({
+            authority: `https://login.microsoftonline.com/${tid}`,
+            oboAssertion: token,
+            scopes: scopes,
+            skipCache: true
+        }).then(result => {
+            console.log("Token is: " + result.accessToken);
+        }).catch(error => {
+            reject({ "error": error.errorCode });
+        });
+    });
+})
+```
 
 
 ## SSO in Teams at runtime
@@ -59,11 +160,3 @@ What is the difference between enable SSO for a team tab app and in microsoft en
 
 **OAuth (Open Authorization)**
 : OAuth is a protocol that allows third-party applications to access a user's resources. For example, a third-party app can access your Google Drive files after you grant permission, without needing your Google password. OAuth can be used as part of an SSO system.
-
-
-
-# Update app manifest for SSO and preview app
-
-
-
-# Grant Microsoft Graph permissions and scopes
