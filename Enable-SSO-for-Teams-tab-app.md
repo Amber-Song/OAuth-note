@@ -63,7 +63,7 @@ function getClientSideToken() {
     });
 }
 ```
-2. Pass the access token to server-side code
+2. Pass the access token to server-side code, the server use that to acquire a token that could access Graph API, it makes the call to Graph API and return the protected data.
 ```
 function getServerSideToken(clientSideToken) {
     return new Promise((resolve, reject) => {
@@ -100,6 +100,19 @@ function getServerSideToken(clientSideToken) {
     });
 }
 ```
+
+Use `microsoftTeams.authentication.authenticate()` to show the consent pop-up
+
+```
+// This open the page of /auth-start
+microsoftTeams.authentication.authenticate({
+    url: window.location.origin + "/auth-start",
+    width: 600,
+    height: 535
+})
+```
+
+And inside /auth-start, the code is designed to authenticate a user within a Microsoft Teams tab app using Microsoft Authentication Library (MSAL) and Azure Active Directory (Azure AD)
 
 
 ## Updating the Teams app manifest to enable token requests
